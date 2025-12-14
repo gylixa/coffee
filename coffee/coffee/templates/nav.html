@@ -1,7 +1,7 @@
 <nav>
     <a href="{% url 'home' %}">Главная</a>
     <a href="{% url 'menu' %}">Меню</a>
-    <a href="#">Контакты</a>
+    <a href="{% url 'contacts' %}">Контакты</a>
 
     {% if user.is_authenticated %}
         <a href="#">Мой кабинет</a>
