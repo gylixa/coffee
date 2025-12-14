@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Главная — НЕ ФИЛЬТР{% endblock %}
+
+{% block content %}
+<h2 style="text-align: center; margin-bottom: 30px;">Добро пожаловать в «НЕ ФИЛЬТР»</h2>
+
+<div style="display: flex; flex-wrap: wrap; gap: 25px; justify-content: center;">
+    
+    <div style="background: white; border-radius: 8px; padding: 20px; width: 280px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+        <h3 style="color: #3E2723;">☕ Для гостей</h3>
+        <p>Попробуйте наш кофе — без фильтров, без лишнего.</p>
+        <ul style="margin: 15px 0; padding-left: 20px;">
+            <li>Ручная обжарка</li>
+            <li>Три метода заваривания</li>
+            <li>Сезонные десерты</li>
+        </ul>
+        <a href="#" style="display: inline-block; background: #3E2723; color: white; padding: 8px 20px; text-decoration: none; border-radius: 4px;">→ Посмотреть меню</a>
+    </div>
+
+    <div style="background: #F5F5F5; border-radius: 8px; padding: 20px; width: 280px; border-left: 4px solid #8D6E63;">
+        <h3 style="color: #3E2723;">🔐 Для клиентов</h3>
+        <p>Личный кабинет, история заказов, бонусы.</p>
+        {% if user.is_authenticated %}
+            <p>Вы уже вошли как <strong>{{ user.fio }}</strong>.</p>
+            <a href="#" style="display: inline-block; background: #5D4037; color: white; padding: 8px 20px; text-decoration: none; border-radius: 4px;">Мой кабинет</a>
+        {% else %}
+            <p>Зарегистрируйтесь — и получите <strong>+100 бонусов</strong> за первый заказ!</p>
+            <div style="margin-top: 15px;">
+                <a href="#" style="display: inline-block; background: #8D6E63; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-right: 8px;">Войти</a>
+                <a href="#" style="display: inline-block; background: #3E2723; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px;">Регистрация</a>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="row justify-content-center">
+    <!-- Контейнер слайдера -->
+    <div class="col-12 col-lg-10 col-xl-8">
+        <div id="coffeeSlider" class="carousel slide" data-bs-ride="carousel">
+
+            <!-- Индикаторы (точки) -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#coffeeSlider" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#coffeeSlider" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#coffeeSlider" data-bs-slide-to="2"></button>
+            </div>
+
+            <!-- Слайды -->
+            <div class="carousel-inner rounded">
+
+                <!-- Слайд 1 -->
+                <div class="carousel-item active">
+                    <img src="{% static 'images/slide1.jpg' %}" class="d-block w-100" alt="Кофе без фильтров">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Кофе без фильтров</h5>
+                        <p>Только зерно, вода, мастерство — и ничего лишнего.</p>
+                        <a href="" class="btn btn-light mt-3">→ Посмотреть меню</a>
+                    </div>
+                </div>
+
+                <!-- Слайд 2 -->
+                <div class="carousel-item">
+                    <img src="{% static 'images/slide2.jpg' %}" class="d-block w-100" alt="Свежая обжарка">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Свежая обжарка</h5>
+                        <p>Каждую неделю — новые сорта из Эфиопии, Колумбии, Бразилии.</p>
+                        <a href="" class="btn btn-light mt-3">→ Где нас найти</a>
+                    </div>
+                </div>
+
+                <!-- Слайд 3 -->
+                <div class="carousel-item">
+                    <img src="{% static 'images/slide3.jpg' %}" class="d-block w-100" alt="Не просто кофе">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Не просто кофе</h5>
+                        <p>Пространство, где можно работать, встречаться или просто помолчать.</p>
+                        <a href="" class="btn btn-light mt-3">→ Войти / Регистрация</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Кнопки переключения -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#coffeeSlider" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Предыдущий</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#coffeeSlider" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Следующий</span>
+            </button>
+
+        </div>
+    </div>
+</div>
+
+<div style="margin-top: 40px; text-align: center; color: #666;">
+    <p>Мы не фильтруем кофе. Мы не фильтруем время. Мы не фильтруем эмоции.</p>
+</div>
+{% endblock %}

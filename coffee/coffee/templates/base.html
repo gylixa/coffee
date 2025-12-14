@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}НЕ ФИЛЬТР{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fafafa;
+        }
+
+        /* Шапка */
+        header {
+            background: #3E2723;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        /* Блок логотипа */
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            height: 40px;
+            /* Если логотип тёмный — добавь: filter: brightness(0) invert(1); */
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .logo-slogan {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        /* Навигация */
+        nav {
+            background: #5D4037;
+            padding: 12px 0;
+            text-align: center;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            transition: background 0.2s;
+        }
+        nav a:hover { background: #4E342E; }
+
+        /* Акцентная кнопка */
+        .btn-auth {
+            background: #D4AF37 !important;
+            color: #3E2723 !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+        }
+        .btn-profile {
+            background: #8D6E63 !important;
+            color: white !important;
+        }
+
+        /* Основной контент */
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #757575;
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+        }
+
+        /* Панель пользователя */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #8D6E63;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+        }
+        .user-info a {
+            color: white;
+            text-decoration: underline;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <header>
+        <div class="logo-box">
+            <img src="{% static 'images/logo.png' %}" alt="НЕ ФИЛЬТР" class="logo-img">
+
+            <div>
+                <div class="logo-text">НЕ ФИЛЬТР</div>
+                <div class="logo-slogan">кофе без фильтров</div>
+            </div>
+        </div>
+
+        <!-- Панель пользователя (справа) -->
+        {% if user.is_authenticated %}
+            <div class="user-info">
+                👋 {{ user.fio|truncatechars:15 }}
+                <a href="{% url 'logout' %}">Выйти</a>
+            </div>
+        {% endif %}
+    </header>
+
+    {% include "nav.html" %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        &copy; 2025 «НЕ ФИЛЬТР» — ул. Кофейная, д. 3<br>
+        Работаем ежедневно: 8:00 – 22:00
+    </footer>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<nav>
+    <a href="{% url 'home' %}">Главная</a>
+    <a href="#">Меню</a>
+    <a href="#">Контакты</a>
+
+    {% if user.is_authenticated %}
+        <a href="#">Мой кабинет</a>
+        <a href="#">Мои заказы</a>
+    {% else %}
+        <a href="#">Войти/Регистрация</a>
+    {% endif %}
+</nav>
