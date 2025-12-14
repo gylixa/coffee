@@ -1,6 +1,6 @@
 <nav>
     <a href="{% url 'home' %}">Главная</a>
-    <a href="#">Меню</a>
+    <a href="{% url 'menu' %}">Меню</a>
     <a href="#">Контакты</a>
 
     {% if user.is_authenticated %}

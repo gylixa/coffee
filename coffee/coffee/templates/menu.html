@@ -1,0 +1,71 @@
+<!-- cafe/templates/menu.html -->
+{% extends "base.html" %}
+
+{% block title %}Меню — НЕ ФИЛЬТР{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold" style="color: #3E2723;">☕ Наше меню</h1>
+        <p class="lead text-muted">Всё готовится вручную. Без фильтров — и в кофе, и в подходе.</p>
+    </div>
+
+    {% if menu_items %}
+        {% for category_name, items in menu_items.items %}
+            <section class="mb-5">
+                <div class="d-flex align-items-center mb-4">
+                    <h2 class="me-3 mb-0" style="color: #5D4037; font-size: 1.5rem;">
+                        {{ category_name }}
+                    </h2>
+                    <div class="flex-grow-1" style="height: 2px; background: #D4AF37; border-radius: 1px;"></div>
+                </div>
+
+                <div class="row g-4">
+                    {% for item in items %}
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-sm border-0">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title mb-1" style="color: #3E2723;">{{ item.name }}</h5>
+                                        <span class="badge bg-warning text-dark fw-bold py-2 px-3" style="font-size: 1.1rem;">
+                                            {{ item.price }} ₽
+                                        </span>
+                                    </div>
+                                    {% if item.description %}
+                                        <p class="card-text text-muted small flex-grow-1">{{ item.description }}</p>
+                                    {% endif %}
+                                    <div class="mt-auto">
+                                        <button class="btn btn-outline-dark btn-sm w-100"
+                                                title="Добавить в заказ"
+                                                onclick="alert('Функция заказа пока в разработке ☕\nНо вы уже можете оформить заказ у бариста!')">
+                                            ➕ Добавить
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endfor %}
+    {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted">Меню временно пусто. Скоро добавим свежую обжарку!</p>
+        </div>
+    {% endif %}
+
+    <!-- Инфо-блок внизу -->
+    <div class="alert alert-light mt-5" role="alert">
+        <div class="d-flex align-items-center">
+            <div class="me-3" style="font-size: 2rem;">☕</div>
+            <div>
+                <h5 class="alert-heading">Как мы готовим?</h5>
+                <p class="mb-0">
+                    Все напитки — на ручной кофемашине La Marzocco. Молоко — ультрапастеризованное, 3.5%.
+                    Десерты выпекаются ежедневно утром.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
