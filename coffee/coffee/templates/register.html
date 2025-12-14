@@ -1,0 +1,117 @@
+<!-- cafe/templates/register.html -->
+{% extends "base.html" %}
+
+{% block title %}Регистрация — НЕ ФИЛЬТР{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold" style="color: #3E2723;">Регистрация</h2>
+                        <p class="text-muted">Создайте аккаунт — получите +100 бонусов за первый заказ!</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Ошибки формы -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}<br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <!-- Имя -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.name.label }}</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="text-danger small mt-1">{{ form.name.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Фамилия -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.surname.label }}</label>
+                            {{ form.surname }}
+                            {% if form.surname.errors %}
+                                <div class="text-danger small mt-1">{{ form.surname.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Отчество -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.patronymic.label }}</label>
+                            {{ form.patronymic }}
+                            {% if form.patronymic.errors %}
+                                <div class="text-danger small mt-1">{{ form.patronymic.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Логин -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.username.label }}</label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-1">{{ form.username.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.email.label }}</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small mt-1">{{ form.email.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Пароль -->
+                        <div class="mb-3">
+                            <label class="form-label">{{ form.password1.label }}</label>
+                            {{ form.password1 }}
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-1">{{ form.password1.errors|first }}</div>
+                            {% endif %}
+                            <div class="form-text">{{ form.password1.help_text }}</div>
+                        </div>
+
+                        <!-- Повтор пароля -->
+                        <div class="mb-4">
+                            <label class="form-label">{{ form.password2.label }}</label>
+                            {{ form.password2 }}
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-1">{{ form.password2.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Согласие -->
+                        <div class="mb-4 form-check">
+                            {{ form.rules }}
+                            <label class="form-check-label">{{ form.rules.label }}</label>
+                            {% if form.rules.errors %}
+                                <div class="text-danger small mt-1">{{ form.rules.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 py-2">
+                            Зарегистрироваться
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Уже есть аккаунт? <a href="" style="color: #3E2723;">Войти</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,66 +3,50 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 import re
 
-# Кастомная модель пользователя
 class CustomUser(AbstractUser):
-    # Валидатор для логина - только латиница и цифры, минимум 6 символов
-    username_validator = RegexValidator(
-        regex=r'^[a-zA-Z0-9]{6,}$',
-        message='Логин должен содержать только латинские буквы и цифры, минимум 6 символов'
+    # Валидаторы
+    name_validator = RegexValidator(
+        regex=r'^[а-яА-ЯёЁ\s\-]+$',
+        message='Имя должно содержать только кириллицу, пробелы и тире.'
+    )
+    surname_validator = RegexValidator(
+        regex=r'^[а-яА-ЯёЁ\s\-]+$',
+        message='Фамилия должна содержать только кириллицу, пробелы и тире.'
+    )
+    patronymic_validator = RegexValidator(
+        regex=r'^[а-яА-ЯёЁ\s\-]*$',
+        message='Отчество должно содержать только кириллицу, пробелы и тире.'
+    )
+    login_validator = RegexValidator(
+        regex=r'^[a-zA-Z0-9\-]{3,30}$',
+        message='Логин: латиница, цифры, тире; 3–30 символов.'
     )
 
-    # Валидатор для ФИО - только кириллица и пробелы
-    fio_validator = RegexValidator(
-        regex=r'^[а-яА-ЯёЁ\s]+$',
-        message='ФИО должно содержать только кириллические символы и пробелы'
-    )
-
-    # Валидатор для телефона - строгий формат 8(XXX)XXX-XX-XX
-    phone_validator = RegexValidator(
-        regex=r'^8\(\d{3}\)\d{3}-\d{2}-\d{2}$',
-        message='Телефон должен быть в формате: 8(XXX)XXX-XX-XX'
-    )
-
-    # Поле логина с валидацией и уникальностью
+    # Поля
+    name = models.CharField('Имя', max_length=100, validators=[name_validator])
+    surname = models.CharField('Фамилия', max_length=100, validators=[surname_validator])
+    patronymic = models.CharField('Отчество', max_length=100, validators=[patronymic_validator], blank=True)
+    
     username = models.CharField(
-        max_length=150,
+        'Логин',
+        max_length=30,
         unique=True,
-        verbose_name='Логин',
-        error_messages={
-            'unique': "Пользователь с таким логином уже существует.",
-        },
+        validators=[login_validator],
+        error_messages={'unique': 'Пользователь с таким логином уже существует.'}
     )
-    # Поле ФИО с валидацией кириллицы
-    fio = models.CharField(
-        max_length=255,
-        validators=[fio_validator],
-        verbose_name='ФИО'
-    )
-    # Поле телефона с валидацией формата
-    phone = models.CharField(
-        max_length=15,
-        validators=[phone_validator],
-        verbose_name='Телефон'
-    )
-    # Поле email с уникальностью
-    email = models.EmailField(unique=True, verbose_name='Email')
-
-    # Отключение стандартных полей имени и фамилии
+    
+    email = models.EmailField('Email', unique=True)
+    
+    # Отключаем старые поля
     first_name = None
     last_name = None
 
-    # Поля, обязательные при создании суперпользователя
-    REQUIRED_FIELDS = ['email', 'fio', 'phone']
+    REQUIRED_FIELDS = ['email', 'name', 'surname']
 
-    class Meta:
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
-    # Строковое представление пользователя
     def __str__(self):
-        return f"{self.fio} ({self.username})"
+        return f"{self.surname} {self.name} {self.patronymic}".strip() or self.username
     
-class MenuItem(models.Model):  # ← "Меню" из диаграммы → переименовал, чтобы не путать с HTML-меню
+class MenuItem(models.Model): 
     CATEGORY_CHOICES = [
         ('drink', 'Напиток'),
         ('dessert', 'Десерт'),
