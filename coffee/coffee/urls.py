@@ -23,7 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'), 
     path('menu/', views.menu, name='menu'),
+    path('menu/<int:item_id>/', views.menu_detail, name='menu_detail'),
     path('contacts/', views.contacts, name='contacts'),
     path('register/', views.register_view, name='register'),
     path('login/', CustomLoginView.as_view(), name='login'),
+    path('logout/', views.custom_logout, name='logout'),
 ]

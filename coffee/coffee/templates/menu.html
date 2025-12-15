@@ -9,7 +9,25 @@
         <h1 class="display-5 fw-bold" style="color: #3E2723;">☕ Наше меню</h1>
         <p class="lead text-muted">Всё готовится вручную. Без фильтров — и в кофе, и в подходе.</p>
     </div>
-
+<!-- Панель фильтров -->
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="form-label">Категория</label>
+                <select name="category" class="form-select" onchange="this.form.submit()">
+                    <option value="">Все позиции</option>
+                    {% for value, label in categories %}
+                        <option value="{{ value }}" {% if current_category == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">
+            </label>
+            </div>
     {% if menu_items %}
         {% for category_name, items in menu_items.items %}
             <section class="mb-5">
@@ -22,6 +40,7 @@
 
                 <div class="row g-4">
                     {% for item in items %}
+                    <a href="{% url 'menu_detail' item.id %}" class="text-decoration-none text-dark">
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 shadow-sm border-0">
                                 <div class="card-body d-flex flex-column">
@@ -44,6 +63,7 @@
                                 </div>
                             </div>
                         </div>
+                    </a>
                     {% endfor %}
                 </div>
             </section>

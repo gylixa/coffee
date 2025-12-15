@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.name }} — НЕ ФИЛЬТР{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Фото -->
+        <div class="col-md-6 mb-4 mb-md-0">
+            {% if item.image %}
+                <img src="{{ item.image.url }}" class="img-fluid rounded shadow-sm" alt="{{ item.name }}">
+            {% else %}
+                <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height: 300px;">
+                    <div class="text-center">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">☕</div>
+                        <p class="text-muted">Фото пока нет</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Описание -->
+        <div class="col-md-6">
+            <h1 class="fw-bold" style="color: #3E2723;">{{ item.name }}</h1>
+            
+            <div class="d-flex align-items-baseline mb-3">
+                <span class="display-5 fw-bold" style="color: #D4AF37;">{{ item.price }} ₽</span>
+                {% if not item.in_stock %}
+                    <span class="badge bg-light text-dark ms-3 border">временно нет</span>
+                {% endif %}
+            </div>
+
+            {% if item.description %}
+                <p class="lead">{{ item.description }}</p>
+            {% endif %}
+
+            <!-- Характеристики -->
+            <div class="mt-4 p-3 bg-light rounded">
+                <h5 class="mb-3">Подробнее:</h5>
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Категория:</strong> {{ item.get_category_display }}</li>
+                    <li><strong>Добавлено:</strong> {{ item.created_at|date:"d E Y" }}</li>
+                    {% if item.in_stock %}
+                        <li><strong>Статус:</strong> <span class="text-success">В наличии</span></li>
+                    {% else %}
+                        <li><strong>Статус:</strong> <span class="text-muted">⏸ Временно недоступно</span></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <!-- Кнопка -->
+            <div class="mt-4">
+                {% if item.in_stock %}
+                    <button class="btn btn-dark btn-lg w-100 py-3"
+                            onclick="alert('Добавлено в заказ!\nОфициант подойдёт в ближайшее время ☕')">
+                        ➕ Заказать
+                    </button>
+                {% else %}
+                    <button class="btn btn-outline-secondary btn-lg w-100 py-3" disabled>
+                        Недоступно сейчас
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{% url 'menu' %}" class="btn btn-outline-dark">&larr; Назад к меню</a>
+    </div>
+</div>
+{% endblock %}

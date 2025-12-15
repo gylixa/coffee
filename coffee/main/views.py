@@ -2,22 +2,50 @@ from .models import MenuItem
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.shortcuts import render, redirect, get_object_or_404
 from coffee.forms import CustomUserCreationForm
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import login, logout
 
 def home(request):
     return render(request, 'home.html')
 
 def menu(request):
-    items = MenuItem.objects.all().order_by('category', 'name')
-    # Группируем по категориям
+    category = request.GET.get('category')
+    sort = request.GET.get('sort', '-created_at')
+
+    items = MenuItem.objects.filter(in_stock=True)
+
+    if category:
+        items = items.filter(category=category)
+
+    # Безопасная сортировка
+    valid_sorts = ['-created_at', 'name', '-name', 'price', '-price']
+    if sort in valid_sorts:
+        items = items.order_by(sort)
+
+    # Группировка (как раньше) — но теперь из отфильтрованных
     menu_dict = {}
     for item in items:
-        cat_display = dict(MenuItem.CATEGORY_CHOICES)[item.category]
-        menu_dict.setdefault(cat_display, []).append(item)
-    return render(request, 'menu.html', {'menu_items': menu_dict})
+        cat_name = item.get_category_display()
+        menu_dict.setdefault(cat_name, []).append(item)
+
+    categories = [
+        ('drink', 'Напитки'),
+        ('dessert', 'Десерты'),
+        ('snack', 'Закуски'),
+    ]
+
+    return render(request, 'menu.html', {
+        'menu_items': menu_dict,
+        'categories': categories,
+        'current_category': category,
+        'current_sort': sort,
+    })
+
+def menu_detail(request, item_id):
+    item = get_object_or_404(MenuItem, id=item_id, in_stock=True)
+    return render(request, 'menu_detail.html', {'item': item})
 
 def contacts(request):
     return render(request, 'contacts.html')
@@ -52,3 +80,7 @@ class CustomLoginView(LoginView):
                 else:
                     messages.error(self.request, "Ошибка при входе. Проверьте данные.")
         return super().form_invalid(form)
+    
+def custom_logout(request):
+    logout(request)
+    return redirect('home')
