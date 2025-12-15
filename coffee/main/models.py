@@ -45,20 +45,33 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.surname} {self.name} {self.patronymic}".strip() or self.username
-    
-class MenuItem(models.Model): 
+
+class MenuItem(models.Model):
     CATEGORY_CHOICES = [
         ('drink', 'Напиток'),
         ('dessert', 'Десерт'),
         ('snack', 'Закуска'),
     ]
+
     name = models.CharField("Название", max_length=100)
-    category = models.CharField("Категория", max_length=20, choices=CATEGORY_CHOICES, default='drink')
+    category = models.CharField("Категория", max_length=20, choices=CATEGORY_CHOICES)
     price = models.DecimalField("Цена", max_digits=6, decimal_places=2)
     description = models.TextField("Описание", blank=True)
+    
+    #когда добавили
+    created_at = models.DateTimeField("Добавлено", auto_now_add=True)
+    
+    # в наличии ли?
+    in_stock = models.BooleanField("В наличии", default=True)
+
+    # фото
+    image = models.ImageField("Фото", upload_to="menu/", blank=True, null=True)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['-created_at']  # новые — первыми
     
 class Order(models.Model):
     STATUS_CHOICES = [
