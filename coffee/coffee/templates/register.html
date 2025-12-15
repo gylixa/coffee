@@ -1,4 +1,4 @@
-<!-- cafe/templates/register.html -->
+
 {% extends "base.html" %}
 
 {% block title %}Регистрация — НЕ ФИЛЬТР{% endblock %}
@@ -106,7 +106,7 @@
 
                     <div class="text-center mt-3">
                         <small class="text-muted">
-                            Уже есть аккаунт? <a href="" style="color: #3E2723;">Войти</a>
+                            Уже есть аккаунт? <a href="{% url 'login' %}" style="color: #3E2723;">Войти</a>
                         </small>
                     </div>
                 </div>

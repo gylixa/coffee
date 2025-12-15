@@ -5,6 +5,7 @@ from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from coffee.forms import CustomUserCreationForm
+from django.contrib.auth.views import LoginView
 
 def home(request):
     return render(request, 'home.html')
@@ -35,3 +36,19 @@ def register_view(request):
         form = CustomUserCreationForm()
 
     return render(request, 'register.html', {'form': form})
+
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
+    redirect_authenticated_user = True
+
+    def form_invalid(self, form):
+        # Перехватываем ошибки и заменяем на русские
+        for field in form.errors:
+            for error in form.errors[field]:
+                if "username" in error.lower() or "password" in error.lower():
+                    messages.error(self.request, "Неверный логин или пароль.")
+                elif "inactive" in error.lower():
+                    messages.error(self.request, "Ваш аккаунт не активирован.")
+                else:
+                    messages.error(self.request, "Ошибка при входе. Проверьте данные.")
+        return super().form_invalid(form)

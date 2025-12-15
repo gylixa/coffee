@@ -128,3 +128,7 @@ AUTH_USER_MODEL = 'main.CustomUser'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+LANGUAGE_CODE = 'ru-ru'
+USE_I18N = True
+USE_L10N = True

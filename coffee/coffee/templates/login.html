@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+
+{% block title %}Вход — НЕ ФИЛЬТР{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold" style="color: #3E2723;">Вход в аккаунт</h2>
+                        <p class="text-muted">Введите логин и пароль</p>
+                    </div>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Логин -->
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Логин</label>
+                            <input type="text"
+                                   name="username"
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                                   id="id_username"
+                                   placeholder="ivan_ivanov"
+                                   required>
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">{{ form.username.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Пароль -->
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Пароль</label>
+                            <input type="password"
+                                   name="password"
+                                   class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                                   id="id_password"
+                                   placeholder="••••••••"
+                                   required>
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback">{{ form.password.errors|first }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Кнопка -->
+                        <button type="submit" class="btn btn-dark w-100 py-2">
+                             Войти
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted">
+                            Нет аккаунта? <a href="{% url 'register' %}" style="color: #3E2723;">Регистрация</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

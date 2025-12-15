@@ -22,12 +22,12 @@
         <h3 style="color: #3E2723;">🔐 Для клиентов</h3>
         <p>Личный кабинет, история заказов, бонусы.</p>
         {% if user.is_authenticated %}
-            <p>Вы уже вошли как <strong>{{ user.fio }}</strong>.</p>
+            <p>Вы уже вошли как <strong>{{ user.username }}</strong>.</p>
             <a href="#" style="display: inline-block; background: #5D4037; color: white; padding: 8px 20px; text-decoration: none; border-radius: 4px;">Мой кабинет</a>
         {% else %}
             <p>Зарегистрируйтесь — и получите <strong>+100 бонусов</strong> за первый заказ!</p>
             <div style="margin-top: 15px;">
-                <a href="#" style="display: inline-block; background: #8D6E63; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-right: 8px;">Войти</a>
+                <a href="{% url 'login' %}" style="display: inline-block; background: #8D6E63; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; margin-right: 8px;">Войти</a>
                 <a href="{% url 'register' %}" style="display: inline-block; background: #3E2723; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px;">Регистрация</a>
             </div>
         {% endif %}
@@ -76,7 +76,7 @@
                     <div class="carousel-caption d-none d-md-block">
                         <h5>Не просто кофе</h5>
                         <p>Пространство, где можно работать, встречаться или просто помолчать.</p>
-                        <a href="" class="btn btn-light mt-3">→ Войти / Регистрация</a>
+                        <a href="{% url 'login' %}" class="btn btn-light mt-3">→ Войти</a>
                     </div>
                 </div>
 

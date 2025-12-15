@@ -9,7 +9,7 @@ class CustomUserCreationForm(UserCreationForm):
         label='Пароль',
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         min_length=6,
-        help_text='Не менее 6 символов.'
+        help_text='Не менее 8 символов.'
     )
     password2 = forms.CharField(
         label='Повторите пароль',
