@@ -179,3 +179,19 @@ def order_create(request):
             })
 
     return render(request, 'order_create.html', {'cart': cart})
+
+@login_required
+def profile(request):
+    # Заказы пользователя, новые — сверху
+    orders = Order.objects.filter(client=request.user).order_by('-created_at')
+    return render(request, 'profile.html', {'orders': orders})
+
+# Удаление заказа (только новых)
+@require_POST
+@login_required
+def delete_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id, client=request.user)
+    if order.status == 'new':
+        order.delete()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False, 'error': 'Можно удалять только новые заказы.'}, status=400)

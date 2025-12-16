@@ -126,7 +126,7 @@
         <!-- Панель пользователя (справа) -->
         {% if user.is_authenticated %}
             <div class="user-info">
-                👋 {{ user.fio|truncatechars:15 }}
+                👋 {{ user.username|truncatechars:15 }}
                 <a href="{% url 'logout' %}">Выйти</a>
             </div>
         {% endif %}

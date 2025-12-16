@@ -4,7 +4,7 @@
     <a href="{% url 'contacts' %}">Контакты</a>
 
     {% if user.is_authenticated %}
-        <a href="#">Мой кабинет</a>
+        <a href="{% url 'profile' %}">Мой кабинет</a>
         <a href="{% url 'my_orders' %}">Мои заказы</a>
         <a href="{% url 'cart_detail' %}">Корзина</a>
     {% else %}
