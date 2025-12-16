@@ -1,4 +1,4 @@
-from .models import MenuItem
+from .models import MenuItem, Order, OrderItem
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
@@ -6,6 +6,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from coffee.forms import CustomUserCreationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login, logout
+from django.http import JsonResponse
+from coffee.cart import Cart
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 def home(request):
     return render(request, 'home.html')
@@ -84,3 +88,94 @@ class CustomLoginView(LoginView):
 def custom_logout(request):
     logout(request)
     return redirect('home')
+
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(client=request.user).order_by('-created_at')
+    return render(request, 'my_orders.html', {'orders': orders})
+
+# → Корзина
+def cart_detail(request):
+    cart = Cart(request)
+    return render(request, 'cart.html', {'cart': cart})
+
+def cart_add(request, item_id):
+    cart = Cart(request)
+    item = get_object_or_404(MenuItem, id=item_id, in_stock=True)
+    cart.add(item_id)
+    
+    # Показываем сообщение
+    messages.success(request, f"«{item.name}» добавлен в корзину!")
+    
+    # Редирект туда, откуда пришёл (или в корзину)
+    next_url = request.GET.get('next') or 'cart_detail'
+    return redirect(next_url)
+
+# → Удалить
+@require_POST
+def cart_remove(request, item_id):
+    cart = Cart(request)
+    cart.remove(item_id)
+    return redirect('cart_detail')
+
+# → Изменить кол-во
+@require_POST
+def cart_update(request):
+    cart = Cart(request)
+    item_id = request.POST.get('item_id')
+    action = request.POST.get('action')
+
+    item = get_object_or_404(MenuItem, id=item_id, in_stock=True)
+    qty_in_cart = cart.cart.get(str(item_id), {}).get('quantity', 0)
+
+    if action == 'inc':
+        if qty_in_cart + 1 <= item.stock:
+            cart.increment(item_id)
+    elif action == 'dec':
+        cart.decrement(item_id)
+
+    return redirect('cart_detail')
+
+# → Оформление заказа (AJAX)
+@login_required
+def order_create(request):
+    cart = Cart(request)
+    if not cart:
+        return redirect('menu')
+
+    if request.method == "POST":
+        password = request.POST.get('password')
+        if request.user.check_password(password):
+            try:
+                # Создаём заказ
+                order = Order.objects.create(
+                    client=request.user,
+                    total=cart.get_total_price(),
+                    status='new'
+                )
+                # Позиции
+                for item_data in cart:
+                    OrderItem.objects.create(
+                        order=order,
+                        menu_item=item_data['item'],
+                        quantity=item_data['quantity'],
+                        price_per_unit=item_data['item'].price
+                    )
+                cart.clear()
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Заказ оформлен! Бариста уже готовит ☕',
+                    'redirect_url': '/'
+                })
+            except Exception as e:
+                return JsonResponse({
+                    'success': False,
+                    'error': 'Ошибка при создании заказа. Попробуйте позже.'
+                })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Неверный пароль. Попробуйте снова.'
+            })
+
+    return render(request, 'order_create.html', {'cart': cart})

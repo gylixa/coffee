@@ -1,0 +1,93 @@
+<!-- cafe/templates/order_create.html -->
+{% extends "base.html" %}
+
+{% block title %}Оформление заказа — НЕ ФИЛЬТР{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4" style="color: #3E2723;">Оформление заказа</h2>
+
+    <div class="row">
+        <div class="col-lg-7">
+            <h5>Ваш заказ:</h5>
+            <ul class="list-group mb-4">
+                {% for item in cart %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>{{ item.item.name }} x {{ item.quantity }}</span>
+                        <span>{{ item.total_price }} ₽</span>  
+                    </li>
+                {% endfor %}
+                <li class="list-group-item bg-light d-flex justify-content-between">
+                    <strong>Итого:</strong>
+                    <strong>{{ cart.get_total_price }} ₽</strong>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Подтверждение</h5>
+                    <p class="text-muted small">
+                        Для защиты от случайных заказов введите ваш пароль.
+                    </p>
+
+                    <form id="order-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label">Пароль</label>
+                            <input type="password" name="password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2">
+                            Сформировать заказ
+                        </button>
+                    </form>
+
+                    <div id="error" class="alert alert-danger mt-3 d-none"></div>
+                    <div id="success" class="alert alert-success mt-3 d-none"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-end mt-3">
+        <a href="{% url 'cart_detail' %}" class="btn btn-outline-dark">← Назад</a>
+    </div>
+</div>
+
+<script>
+document.getElementById('order-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    const error = document.getElementById('error');
+    const success = document.getElementById('success');
+
+    error.classList.add('d-none');
+    success.classList.add('d-none');
+
+    try {
+        const res = await fetch('{% url "order_create" %}', {
+            method: 'POST',
+            body: data,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const json = await res.json();
+
+        if (json.success) {
+            success.textContent = json.message;
+            success.classList.remove('d-none');
+            setTimeout(() => {
+                window.location.href = json.redirect_url;
+            }, 2000);
+        } else {
+            error.textContent = json.error;
+            error.classList.remove('d-none');
+        }
+    } catch {
+        error.textContent = 'Ошибка соединения. Проверьте интернет.';
+        error.classList.remove('d-none');
+    }
+});
+</script>
+{% endblock %}

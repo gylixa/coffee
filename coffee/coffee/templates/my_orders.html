@@ -1,0 +1,84 @@
+<!-- cafe/templates/my_orders.html -->
+{% extends "base.html" %}
+
+{% block title %}Мои заказы — НЕ ФИЛЬТР{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold" style="color: #3E2723;">📦 Мои заказы</h2>
+        <a href="{% url 'menu' %}" class="btn btn-outline-dark btn-sm">+ Новый заказ</a>
+    </div>
+
+    {% if orders %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Дата</th>
+                        <th>Статус</th>
+                        <th>Состав</th>
+                        <th class="text-end">Итого</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td><strong>#{{ order.id }}</strong></td>
+                            <td>{{ order.created_at|date:"d.m.Y" }}<br><small>{{ order.created_at|time:"H:i" }}</small></td>
+                            <td>
+                                {% with status=order.status %}
+                                    <span style="
+                                        display: inline-block;
+                                        padding: 4px 10px;
+                                        border-radius: 20px;
+                                        font-weight: bold;
+                                        font-size: 0.85rem;
+                                        {% if status == 'new' %}background: #FFD700; color: #333;
+                                        {% elif status == 'pending' %}background: #87CEFA; color: #333;
+                                        {% elif status == 'ready' %}background: #90EE90; color: #333;
+                                        {% elif status == 'completed' %}background: #32CD32; color: white;
+                                        {% elif status == 'cancelled' %}background: #FF6347; color: white;
+                                        {% else %}background: #eee;
+                                        {% endif %}
+                                    ">{{ order.get_status_display }}</span>
+                                {% endwith %}
+                            </td>
+                            <td>
+                                <ul class="mb-0" style="padding-left: 1.2rem;">
+                                    {% for item in order.items.all %}
+                                        <li>{{ item.quantity }}× {{ item.menu_item.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                            <td class="text-end fw-bold">{{ order.total }} ₽</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert alert-info mt-4">
+            <div class="d-flex">
+                <div class="me-3">ℹ️</div>
+                <div>
+                    <strong>Статусы заказов:</strong><br>
+                    <span style="background:#FFD700; padding:2px 8px; border-radius:4px;">Новый</span> → 
+                    <span style="background:#87CEFA; padding:2px 8px; border-radius:4px;">Принят</span> → 
+                    <span style="background:#90EE90; padding:2px 8px; border-radius:4px;">Готов</span> → 
+                    <span style="background:#32CD32; color:white; padding:2px 8px; border-radius:4px;">Выдан</span>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="text-center py-5">
+            <div style="font-size: 3rem; margin-bottom: 20px;">📦</div>
+            <h4 class="mb-3">У вас пока нет заказов</h4>
+            <p class="text-muted">Выберите напитки и оформите первый заказ — и получите +100 бонусов!</p>
+            <a href="{% url 'menu' %}" class="btn btn-dark">Перейти к меню</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

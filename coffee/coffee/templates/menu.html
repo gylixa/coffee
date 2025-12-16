@@ -54,11 +54,10 @@
                                         <p class="card-text text-muted small flex-grow-1">{{ item.description }}</p>
                                     {% endif %}
                                     <div class="mt-auto">
-                                        <button class="btn btn-outline-dark btn-sm w-100"
-                                                title="Добавить в заказ"
-                                                onclick="alert('Функция заказа пока в разработке ☕\nНо вы уже можете оформить заказ у бариста!')">
+                                        <a href="{% url 'cart_add' item.id %}?next={{ request.path }}"
+                                            class="btn btn-dark btn-sm w-100">
                                             ➕ Добавить
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
                             </div>

@@ -61,12 +61,18 @@ class MenuItem(models.Model):
     #когда добавили
     created_at = models.DateTimeField("Добавлено", auto_now_add=True)
     
-    # в наличии ли?
+    # git add .в наличии ли?
     in_stock = models.BooleanField("В наличии", default=True)
 
     # фото
     image = models.ImageField("Фото", upload_to="menu/", blank=True, null=True)
+    stock = models.PositiveIntegerField("Остаток", default=999)  # 999 = "много"
 
+    # Метод: сколько можно добавить в корзину
+    def max_addable(self, already_in_cart=0):
+        if not self.in_stock:
+            return 0
+        return max(0, self.stock - already_in_cart)
     def __str__(self):
         return self.name
 

@@ -1,0 +1,72 @@
+<!-- cafe/templates/cart.html -->
+{% extends "base.html" %}
+
+{% block title %}Корзина — НЕ ФИЛЬТР{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4" style="color: #3E2723;">🛒 Ваша корзина</h2>
+
+    {% if cart %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Позиция</th>
+                        <th class="text-center">Кол-во</th>
+                        <th class="text-end">Цена</th>
+                        <th class="text-end">Итого</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart %}
+                        <tr>
+                            <td><strong>{{ item.item.name }}</strong></td>
+                            <td class="text-center">
+                                <form method="post" action="{% url 'cart_update' %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="item_id" value="{{ item.item.id }}">
+                                    <button type="submit" name="action" value="dec" class="btn btn-sm btn-outline-secondary">−</button>
+                                    {{ item.quantity }}
+                                    {% if item.quantity <= item.item.stock %}
+                                        <button type="submit" name="action" value="inc" class="btn btn-sm btn-outline-secondary">+</button>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-outline-light" disabled>+</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                            <td class="text-end">{{ item.item.price }} ₽</td>
+                            <td class="text-end">{{ item.total_price }} ₽</td>  
+                            <td>
+                                <a href="{% url 'cart_remove' item.item.id %}" class="btn btn-sm btn-outline-danger">×</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr class="table-active">
+                        <td colspan="3" class="text-end"><strong>Итого:</strong></td>
+                        <td class="text-end"><strong>{{ cart.get_total_price }} ₽</strong></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="text-end mt-4">
+            <a href="{% url 'menu' %}" class="btn btn-outline-dark me-2">← Продолжить выбор</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'order_create' %}" class="btn btn-dark">Оформить заказ</a>
+            {% else %}
+                <a href="{% url 'login' %}?next=/cart/" class="btn btn-dark">Войти для оформления</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <p class="lead text-muted">Корзина пуста.</p>
+            <a href="{% url 'menu' %}" class="btn btn-outline-dark">Выбрать напитки →</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
