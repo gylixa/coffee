@@ -45,16 +45,24 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.surname} {self.name} {self.patronymic}".strip() or self.username
+class Category(models.Model):
+    name = models.CharField("Название", max_length=100, unique=True)
 
+    def __str__(self):
+            return self.name
+
+    class Meta:
+            verbose_name = "Категория"
+            verbose_name_plural = "Категории"
+            
 class MenuItem(models.Model):
-    CATEGORY_CHOICES = [
-        ('drink', 'Напиток'),
-        ('dessert', 'Десерт'),
-        ('snack', 'Закуска'),
-    ]
 
     name = models.CharField("Название", max_length=100)
-    category = models.CharField("Категория", max_length=20, choices=CATEGORY_CHOICES)
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT,  # нельзя удалить категорию, если есть товары
+        verbose_name="Категория"
+    )
     price = models.DecimalField("Цена", max_digits=6, decimal_places=2)
     description = models.TextField("Описание", blank=True)
     
@@ -91,6 +99,7 @@ class Order(models.Model):
     created_at = models.DateTimeField("Дата и время", auto_now_add=True)
     total = models.DecimalField("Итого", max_digits=8, decimal_places=2, default=0)
     status = models.CharField("Статус", max_length=20, choices=STATUS_CHOICES, default='new')
+    cancellation_reason = models.TextField("Причина отмены", blank=True)
 
     def __str__(self):
         return f"Заказ #{self.id} от {self.created_at.strftime('%d.%m %H:%M')}"

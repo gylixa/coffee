@@ -1,4 +1,4 @@
-from .models import MenuItem, Order, OrderItem
+from .models import MenuItem, Order, OrderItem, Category
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
@@ -17,7 +17,7 @@ def home(request):
 def menu(request):
     category = request.GET.get('category')
     sort = request.GET.get('sort', '-created_at')
-
+    category_id = request.GET.get('category')
     items = MenuItem.objects.filter(in_stock=True)
 
     if category:
@@ -31,20 +31,17 @@ def menu(request):
     # Группировка (как раньше) — но теперь из отфильтрованных
     menu_dict = {}
     for item in items:
-        cat_name = item.get_category_display()
+        cat_name = item.category.name
         menu_dict.setdefault(cat_name, []).append(item)
 
-    categories = [
-        ('drink', 'Напитки'),
-        ('dessert', 'Десерты'),
-        ('snack', 'Закуски'),
-    ]
+    categories = Category.objects.all()
 
     return render(request, 'menu.html', {
         'menu_items': menu_dict,
         'categories': categories,
         'current_category': category,
         'current_sort': sort,
+        'current_category_id': int(category_id) if category_id and category_id.isdigit() else None,
     })
 
 def menu_detail(request, item_id):
@@ -94,7 +91,7 @@ def my_orders(request):
     orders = Order.objects.filter(client=request.user).order_by('-created_at')
     return render(request, 'my_orders.html', {'orders': orders})
 
-# → Корзина
+# Корзина
 def cart_detail(request):
     cart = Cart(request)
     return render(request, 'cart.html', {'cart': cart})
@@ -111,14 +108,14 @@ def cart_add(request, item_id):
     next_url = request.GET.get('next') or 'cart_detail'
     return redirect(next_url)
 
-# → Удалить
+# Удалить
 @require_POST
 def cart_remove(request, item_id):
     cart = Cart(request)
     cart.remove(item_id)
     return redirect('cart_detail')
 
-# → Изменить кол-во
+# Изменить кол-во
 @require_POST
 def cart_update(request):
     cart = Cart(request)
@@ -136,7 +133,7 @@ def cart_update(request):
 
     return redirect('cart_detail')
 
-# → Оформление заказа (AJAX)
+# Оформление заказа 
 @login_required
 def order_create(request):
     cart = Cart(request)

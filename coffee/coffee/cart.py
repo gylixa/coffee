@@ -1,4 +1,4 @@
-# cafe/cart.py
+
 from main.models import MenuItem
 class Cart:
     def __init__(self, request):
@@ -46,7 +46,7 @@ class Cart:
             if item_id_str in cart:
                 quantity = cart[item_id_str]['quantity']
                 cart[item_id_str]['item'] = item
-                cart[item_id_str]['total_price'] = item.price * quantity  # ← добавили
+                cart[item_id_str]['total_price'] = item.price * quantity  
         
         for data in cart.values():
             if 'item' in data and data.get('quantity', 0) > 0:

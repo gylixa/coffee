@@ -1,4 +1,3 @@
-<!-- cafe/templates/menu.html -->
 {% extends "base.html" %}
 
 {% block title %}Меню — НЕ ФИЛЬТР{% endblock %}
@@ -17,9 +16,9 @@
                 <label class="form-label">Категория</label>
                 <select name="category" class="form-select" onchange="this.form.submit()">
                     <option value="">Все позиции</option>
-                    {% for value, label in categories %}
-                        <option value="{{ value }}" {% if current_category == value %}selected{% endif %}>
-                            {{ label }}
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if current_category_id == cat.id %}selected{% endif %}>
+                            {{ cat.name }}
                         </option>
                     {% endfor %}
                 </select>

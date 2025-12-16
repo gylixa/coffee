@@ -7,6 +7,9 @@
         <a href="{% url 'profile' %}">Мой кабинет</a>
         <a href="{% url 'my_orders' %}">Мои заказы</a>
         <a href="{% url 'cart_detail' %}">Корзина</a>
+        {% if user.is_staff %}
+        <a href="/admin/">Админка</a>
+        {% endif %}
     {% else %}
         <a href="{% url 'login' %}">Войти</a>
     {% endif %}
