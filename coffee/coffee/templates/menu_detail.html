@@ -67,10 +67,10 @@
             <!-- Кнопка -->
             <div class="mt-4">
                 {% if item.in_stock %}
-                    <button class="btn btn-dark btn-lg w-100 py-3"
-                            onclick="alert('Добавлено в заказ!\nОфициант подойдёт в ближайшее время ☕')">
-                        ➕ Заказать
-                    </button>
+                    <a href="{% url 'cart_add' item.id %}?next={{ request.path }}"
+                     class="btn btn-dark btn-sm w-100">
+                     ➕ Добавить
+                    </a>
                 {% else %}
                     <button class="btn btn-outline-secondary btn-lg w-100 py-3" disabled>
                         Недоступно сейчас
