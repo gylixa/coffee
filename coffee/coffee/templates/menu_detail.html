@@ -36,15 +36,31 @@
 
             <!-- Характеристики -->
             <div class="mt-4 p-3 bg-light rounded">
-                <h5 class="mb-3">Подробнее:</h5>
+                <h5 class="mb-3">Характеристики:</h5>
                 <ul class="list-unstyled mb-0">
-                    <li><strong>Категория:</strong> {{ item.get_category_display }}</li>
+                    <li><strong>Категория:</strong> {{ item.category.name }}</li>
                     <li><strong>Добавлено:</strong> {{ item.created_at|date:"d E Y" }}</li>
-                    {% if item.in_stock %}
-                        <li><strong>Статус:</strong> <span class="text-success">В наличии</span></li>
-                    {% else %}
-                        <li><strong>Статус:</strong> <span class="text-muted">⏸ Временно недоступно</span></li>
+                    
+                    {% if item.volume_ml %}
+                        <li><strong>Объём:</strong> {{ item.volume_ml }} мл</li>
                     {% endif %}
+                    
+                    {% if item.calories %}
+                        <li><strong>Калории:</strong> {{ item.calories }} ккал</li>
+                    {% endif %}
+                    
+                    <li><strong>Веганский:</strong> 
+                        {% if item.is_vegan %}<span class="text-success">✔ Да</span>
+                        {% else %}<span class="text-muted">✖ Нет</span>{% endif %}
+                    </li>
+                    
+                    <li><strong>Статус:</strong> 
+                        {% if item.in_stock %}
+                            <span class="text-success">✔ В наличии</span>
+                        {% else %}
+                            <span class="text-muted">⏸ Недоступно</span>
+                        {% endif %}
+                    </li>
                 </ul>
             </div>
 

@@ -8,25 +8,70 @@
         <h1 class="display-5 fw-bold" style="color: #3E2723;">☕ Наше меню</h1>
         <p class="lead text-muted">Всё готовится вручную. Без фильтров — и в кофе, и в подходе.</p>
     </div>
-<!-- Панель фильтров -->
-<div class="card mb-4 shadow-sm">
-    <div class="card-body">
-        <form method="get" class="row g-3 align-items-end">
-            <div class="col-md-5">
-                <label class="form-label">Категория</label>
-                <select name="category" class="form-select" onchange="this.form.submit()">
-                    <option value="">Все позиции</option>
-                    {% for cat in categories %}
-                        <option value="{{ cat.id }}" {% if current_category_id == cat.id %}selected{% endif %}>
-                            {{ cat.name }}
+
+    <!-- Панель фильтров и сортировки -->
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="get" class="row g-3 align-items-end">
+                <!-- Фильтр по категории -->
+                <div class="col-md-5">
+                    <label class="form-label">Категория</label>
+                    <select name="category" class="form-select" onchange="this.form.submit()">
+                        <option value="">Все позиции</option>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if current_category_id == cat.id %}selected{% endif %}>
+                                {{ cat.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Сортировка -->
+                <div class="col-md-5">
+                    <label class="form-label">Сортировать</label>
+                    <select name="sort" class="form-select" onchange="this.form.submit()">
+                        <option value="-created_at" {% if current_sort == '-created_at' %}selected{% endif %}>
+                            Сначала новые
                         </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="col-md-5">
-                <label class="form-label">
-            </label>
-            </div>
+                        <option value="name" {% if current_sort == 'name' %}selected{% endif %}>
+                            Название (А→Я)
+                        </option>
+                        <option value="-name" {% if current_sort == '-name' %}selected{% endif %}>
+                            Название (Я→А)
+                        </option>
+                        <option value="price" {% if current_sort == 'price' %}selected{% endif %}>
+                            Цена ↑
+                        </option>
+                        <option value="-price" {% if current_sort == '-price' %}selected{% endif %}>
+                            Цена ↓
+                        </option>
+                        <option value="volume_ml" {% if current_sort == 'volume_ml' %}selected{% endif %}>
+                            Объём ↑
+                        </option>
+                        <option value="-volume_ml" {% if current_sort == '-volume_ml' %}selected{% endif %}>
+                            Объём ↓
+                        </option>
+                        <option value="calories" {% if current_sort == 'calories' %}selected{% endif %}>
+                            Калории ↑
+                        </option>
+                        <option value="-calories" {% if current_sort == '-calories' %}selected{% endif %}>
+                            Калории ↓
+                        </option>
+                        <option value="is_vegan" {% if current_sort == 'is_vegan' %}selected{% endif %}>
+                            Веганские первыми
+                        </option>
+                    </select>
+                </div>
+
+                <!-- Кнопка сброса -->
+                <div class="col-md-2">
+                    <a href="{% url 'menu' %}" class="btn btn-outline-secondary w-100">Сбросить</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Товары -->
     {% if menu_items %}
         {% for category_name, items in menu_items.items %}
             <section class="mb-5">
@@ -39,29 +84,38 @@
 
                 <div class="row g-4">
                     {% for item in items %}
-                    <a href="{% url 'menu_detail' item.id %}" class="text-decoration-none text-dark">
-                        <div class="col-12 col-md-6 col-lg-4">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <a href="{% url 'menu_detail' item.id %}" class="text-decoration-none text-dark">
                             <div class="card h-100 shadow-sm border-0">
                                 <div class="card-body d-flex flex-column">
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <h5 class="card-title mb-1" style="color: #3E2723;">{{ item.name }}</h5>
-                                        <span class="badge bg-warning text-dark fw-bold py-2 px-3" style="font-size: 1.1rem;">
+                                        <span class="badge bg-warning text-dark fw-bold py-2 px-3">
                                             {{ item.price }} ₽
                                         </span>
                                     </div>
+                                    
+                                    <!--  Вывод характеристик в карточке -->
+                                    <div class="mb-2">
+                                        {% if item.volume_ml %}<small class="text-muted"> {{ item.volume_ml }} мл</small>{% endif %}
+                                        {% if item.calories %}<small class="text-muted ms-2"> {{ item.calories }} ккал</small>{% endif %}
+                                        {% if item.is_vegan %}<small class="text-success ms-2">Веганский</small>{% endif %}
+                                    </div>
+
                                     {% if item.description %}
-                                        <p class="card-text text-muted small flex-grow-1">{{ item.description }}</p>
+                                        <p class="card-text text-muted small flex-grow-1">{{ item.description|truncatewords:10 }}</p>
                                     {% endif %}
+
                                     <div class="mt-auto">
                                         <a href="{% url 'cart_add' item.id %}?next={{ request.path }}"
-                                            class="btn btn-dark btn-sm w-100">
+                                           class="btn btn-dark btn-sm w-100">
                                             ➕ Добавить
                                         </a>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                     {% endfor %}
                 </div>
             </section>
@@ -72,7 +126,7 @@
         </div>
     {% endif %}
 
-    <!-- Инфо-блок внизу -->
+    <!-- Инфо-блок -->
     <div class="alert alert-light mt-5" role="alert">
         <div class="d-flex align-items-center">
             <div class="me-3" style="font-size: 2rem;">☕</div>

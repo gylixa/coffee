@@ -75,7 +75,9 @@ class MenuItem(models.Model):
     # фото
     image = models.ImageField("Фото", upload_to="menu/", blank=True, null=True)
     stock = models.PositiveIntegerField("Остаток", default=999)  # 999 = "много"
-
+    volume_ml = models.PositiveSmallIntegerField("Объём, мл", blank=True, null=True)
+    calories = models.PositiveSmallIntegerField("Калории, ккал", blank=True, null=True)
+    is_vegan = models.BooleanField("Веганский", default=False, blank=True)
     # Метод: сколько можно добавить в корзину
     def max_addable(self, already_in_cart=0):
         if not self.in_stock:

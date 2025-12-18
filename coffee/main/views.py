@@ -15,33 +15,39 @@ def home(request):
     return render(request, 'home.html')
 
 def menu(request):
-    category = request.GET.get('category')
-    sort = request.GET.get('sort', '-created_at')
     category_id = request.GET.get('category')
-    items = MenuItem.objects.filter(in_stock=True)
+    sort = request.GET.get('sort', '-created_at')
 
-    if category:
-        items = items.filter(category=category)
+    items = MenuItem.objects.filter(in_stock=True).select_related('category')
 
-    # Безопасная сортировка
-    valid_sorts = ['-created_at', 'name', '-name', 'price', '-price']
+    if category_id and category_id.isdigit():
+        items = items.filter(category_id=category_id)
+
+    # 🔹 Безопасная сортировка: разрешаем новые поля
+    valid_sorts = [
+        '-created_at', 'name', '-name',
+        'price', '-price',
+        'volume_ml', '-volume_ml',
+        'calories', '-calories',
+        'is_vegan'  # False (0) → True (1): сначала веганские
+    ]
     if sort in valid_sorts:
         items = items.order_by(sort)
 
-    # Группировка (как раньше) — но теперь из отфильтрованных
+    # Группировка по категориям
     menu_dict = {}
     for item in items:
-        cat_name = item.category.name
+        cat_name = item.category.name if item.category else "Без категории"
         menu_dict.setdefault(cat_name, []).append(item)
 
     categories = Category.objects.all()
+    current_category_id = int(category_id) if category_id and category_id.isdigit() else None
 
     return render(request, 'menu.html', {
         'menu_items': menu_dict,
         'categories': categories,
-        'current_category': category,
+        'current_category_id': current_category_id,
         'current_sort': sort,
-        'current_category_id': int(category_id) if category_id and category_id.isdigit() else None,
     })
 
 def menu_detail(request, item_id):
